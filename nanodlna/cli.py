@@ -66,7 +66,13 @@ def play(args):
 
     target_ip = device["hostname"]
     serve_ip = streaming.get_serve_ip(target_ip)
-    files_urls = streaming.start_server(files, serve_ip)
+
+    if args.file_video.startswith('http://') or args.file_video.startswith('https://'):
+        files_urls = files
+    else:
+        files_urls = streaming.start_server(files, serve_ip)
+    
+    print(files_urls)
 
     # Play the video through DLNA protocol
 
