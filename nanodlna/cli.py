@@ -59,7 +59,9 @@ def play(args):
             else:
                 device = my_devices[0]
 
-    if not device:
+    if device:
+        print('Start streaming on device: ' + device['location'])
+    else:
         sys.exit("No devices found.")
 
     # Configure streaming server
