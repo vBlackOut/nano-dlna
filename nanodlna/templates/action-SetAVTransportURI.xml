@@ -1,10 +1,10 @@
-<?xml version='1.0' encoding='utf-8'?>
-<s:Envelope s:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" xmlns:s="http://schemas.xmlsoap.org/soap/envelope/">
-  <s:Body>
-    <u:SetAVTransportURI xmlns:u="urn:schemas-upnp-org:service:AVTransport:1">
-      <InstanceID>0</InstanceID>
-      <CurrentURI>{uri_video}</CurrentURI>
-      <CurrentURIMetaData>{metadata}</CurrentURIMetaData>
-    </u:SetAVTransportURI>
-  </s:Body>
-</s:Envelope>
+<?xml version="1.0"?>
+<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" SOAP-ENV:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
+<SOAP-ENV:Body>
+    <m:SetAVTransportURI xmlns:m="urn:schemas-upnp-org:service:AVTransport:1">
+      <InstanceID xmlns:dt="urn:schemas-microsoft-com:datatypes" dt:dt="ui4">0</InstanceID>
+      <CurrentURI xmlns:dt="urn:schemas-microsoft-com:datatypes" dt:dt="string">{uri_video}</CurrentURI>
+      <CurrentURIMetaData xmlns:dt="urn:schemas-microsoft-com:datatypes" dt:dt="string">&lt;DIDL-Lite xmlns="urn:schemas-upnp-org:metadata-1-0/DIDL-Lite/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:upnp="urn:schemas-upnp-org:metadata-1-0/upnp/" xmlns:dlna="urn:schemas-dlna-org:device-1-0"&gt;&lt;item id="36e9bdbfd26503888b0833bcc5110712a" parentID="8" restricted="0"&gt;&lt;upnp:class&gt;object.item.videoItem.movie&lt;/upnp:class&gt;&lt;dc:title&gt;Stream&lt;/dc:title&gt;&lt;res&gt;{uri_video}&lt;/res&gt;&lt;/item&gt;&lt;/DIDL-Lite&gt;</CurrentURIMetaData>
+    </m:SetAVTransportURI>
+  </SOAP-ENV:Body>
+</SOAP-ENV:Envelope>
