@@ -54,11 +54,13 @@ def register_device(location_url):
     return device
 
 
-def get_devices(timeout=3.0):
+def get_devices(timeout=3.0, interface=''):
 
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
     s.setsockopt(socket.IPPROTO_IP, socket.IP_MULTICAST_TTL, 4)
-    s.bind(("", SSDP_BROADCAST_PORT + 10))
+    if interface != '':
+        s.setsockopt(socket.SOL_SOCKET, 25, (interface+'\0').encode())
+    s.bind(('', SSDP_BROADCAST_PORT + 10))
 
     s.sendto(SSDP_BROADCAST_MSG.encode("UTF-8"), (SSDP_BROADCAST_ADDR,
                                                   SSDP_BROADCAST_PORT))

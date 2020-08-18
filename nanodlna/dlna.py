@@ -34,7 +34,7 @@ def play(files_urls, device):
     video_data = {
         "uri_video": files_urls["file_video"],
         "type_video": os.path.splitext(files_urls["file_video"])[1][1:],
-        "object_type": 'object.item.imageItem.photo' if files_urls["file_video"].endswith('jpg') else "object.item.videoItem.movie"
+        "object_type": 'object.item.imageItem.photo' if (files_urls["file_video"].endswith('jpg') or files_urls["file_video"].endswith('png')) else "object.item.videoItem.movie"
     }
 
     if "file_subtitle" in files_urls and files_urls["file_subtitle"]:
