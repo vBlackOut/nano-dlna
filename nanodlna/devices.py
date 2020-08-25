@@ -41,8 +41,12 @@ def register_device(location_url):
         "./device/serviceList/service/[serviceType='{0}']/controlURL".format(
             UPNP_DEFAULT_SERVICE_TYPE
         )
-    ).text
-    action_url = urllibparse.urljoin(location_url, path)
+    )
+
+    if path is None:
+        raise Exception('Could not find control URL')
+
+    action_url = urllibparse.urljoin(location_url, path.text)
 
     device = {
         "location": location_url,
@@ -81,7 +85,7 @@ def get_device(device_ip, timeout=3.0, interface=''):
                     for a in data.decode("UTF-8").split("\r\n")[1:]]
             device = dict([(a[0].strip().lower(), a[1].strip())
                            for a in info if len(a) >= 2])
-            break
+            return register_device(device['location'])
         except Exception:
             pass
 
