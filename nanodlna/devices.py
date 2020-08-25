@@ -53,28 +53,59 @@ def register_device(location_url):
     }
     return device
 
+def get_device(device_ip, timeout=3.0, interface=''):
+
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
+    s.setsockopt(socket.IPPROTO_IP, socket.IP_MULTICAST_TTL, 4)
+
+    if interface != '':
+        s.setsockopt(socket.SOL_SOCKET, 25, (interface+'\0').encode())
+
+    s.bind(('', SSDP_BROADCAST_PORT + 10))
+
+    ssdp_params = [
+        "M-SEARCH * HTTP/1.1",
+        "HOST: {0}:{1}".format(device_ip, SSDP_BROADCAST_PORT),
+        "MAN: \"ssdp:discover\"", "MX: 10", "ST: ssdp:all", "", ""]
+    ssdp_msg = "\r\n".join(ssdp_params)
+    s.sendto(ssdp_msg.encode("UTF-8"), (device_ip, SSDP_BROADCAST_PORT))
+    s.settimeout(timeout)
+
+    while True:
+        try:
+            data, addr = s.recvfrom(1024)
+        except socket.timeout:
+            break
+        try:
+            info = [a.split(":", 1)
+                    for a in data.decode("UTF-8").split("\r\n")[1:]]
+            device = dict([(a[0].strip().lower(), a[1].strip())
+                           for a in info if len(a) >= 2])
+            break
+        except Exception:
+            pass
+
+    return register_device(device['location'])
 
 def get_devices(timeout=3.0, interface=''):
 
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
     s.setsockopt(socket.IPPROTO_IP, socket.IP_MULTICAST_TTL, 4)
+
     if interface != '':
         s.setsockopt(socket.SOL_SOCKET, 25, (interface+'\0').encode())
-    s.bind(('', SSDP_BROADCAST_PORT + 10))
 
+    s.bind(('', SSDP_BROADCAST_PORT + 10))
     s.sendto(SSDP_BROADCAST_MSG.encode("UTF-8"), (SSDP_BROADCAST_ADDR,
                                                   SSDP_BROADCAST_PORT))
-
     s.settimeout(timeout)
-
     devices = []
-    while True:
 
+    while True:
         try:
             data, addr = s.recvfrom(1024)
         except socket.timeout:
             break
-
         try:
             info = [a.split(":", 1)
                     for a in data.decode("UTF-8").split("\r\n")[1:]]
