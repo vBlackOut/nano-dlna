@@ -75,7 +75,7 @@ def get_device(device_ip, timeout=3.0, interface=''):
         try:
             data, addr = s.recvfrom(1024)
         except socket.timeout:
-            break
+            return None
         try:
             info = [a.split(":", 1)
                     for a in data.decode("UTF-8").split("\r\n")[1:]]
