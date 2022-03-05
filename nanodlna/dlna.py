@@ -41,7 +41,8 @@ def play(files_urls, device):
 
         video_data.update({
             "uri_sub": files_urls["file_subtitle"],
-            "type_sub": os.path.splitext(files_urls["file_subtitle"])[1][1:]
+            "type_sub": os.path.splitext(files_urls["file_subtitle"])[1][1:],
+            "title_video": files_urls['file_subtitle'].split("/")[-1]
         })
 
         metadata = pkgutil.get_data(
