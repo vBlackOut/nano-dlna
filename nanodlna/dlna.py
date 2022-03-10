@@ -1,3 +1,4 @@
+
 #!/usr/bin/env python3
 # encoding: UTF-8
 
@@ -5,6 +6,8 @@ import os
 import pkgutil
 import sys
 from xml.sax.saxutils import escape as xmlescape
+import requests
+import time
 
 if sys.version_info.major == 3:
     import urllib.request as urllibreq
@@ -13,9 +16,9 @@ else:
 
 
 def send_dlna_action(device, data, action):
-
-    action_data = pkgutil.get_data(
-        "nanodlna", "templates/action-{0}.xml".format(action)).decode("UTF-8")
+    #print("templates/action-{0}.xml".format(action))
+    # action_data = pkgutil.get_data(self, "templates/action-{0}.xml".format(action)).decode("UTF-8")
+    action_data = open("app/TV/dnla/templates/action-{0}.xml".format(action), 'rb').read().decode("UTF-8")
     action_data = action_data.format(**data).encode("UTF-8")
 
     headers = {
@@ -25,8 +28,17 @@ def send_dlna_action(device, data, action):
         "SOAPACTION": "\"{0}#{1}\"".format(device["st"], action)
     }
 
-    request = urllibreq.Request(device["action_url"], action_data, headers)
-    urllibreq.urlopen(request)
+    r = requests.post(device["action_url"], action_data, headers=headers)
+
+    if r.status_code == 500:
+        stop(device)
+        time.sleep(5)
+        r = requests.post(device["action_url"], action_data, headers=headers)
+
+    # request = urllibreq.Request(device["action_url"], action_data, headers)
+    # response = urllibreq.urlopen(request)
+    # content =  response.read()
+    # print(content)
 
 
 def play(files_urls, device):
@@ -41,8 +53,7 @@ def play(files_urls, device):
 
         video_data.update({
             "uri_sub": files_urls["file_subtitle"],
-            "type_sub": os.path.splitext(files_urls["file_subtitle"])[1][1:],
-            "title_video": files_urls['file_subtitle'].split("/")[-1]
+            "type_sub": os.path.splitext(files_urls["file_subtitle"])[1][1:]
         })
 
         metadata = pkgutil.get_data(
@@ -55,3 +66,9 @@ def play(files_urls, device):
 
     send_dlna_action(device, video_data, "SetAVTransportURI")
     send_dlna_action(device, video_data, "Play")
+
+def stop(device):
+    send_dlna_action(device, {"":""}, "Stop")
+
+def pause(device):
+    send_dlna_action(device, {"":""}, "Pause")
